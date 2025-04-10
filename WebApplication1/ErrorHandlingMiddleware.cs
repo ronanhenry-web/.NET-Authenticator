@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
@@ -9,11 +10,13 @@ namespace WebApplication1.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        private readonly IStringLocalizer<ErrorHandlingMiddleware> _localizer;
 
-        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, IStringLocalizer<ErrorHandlingMiddleware> localizer)
         {
             _next = next;
             _logger = logger;
+            _localizer = localizer;
         }
 
         public async Task Invoke(HttpContext context)
@@ -29,12 +32,24 @@ namespace WebApplication1.Middleware
                 context.Response.ContentType = "application/problem+json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
+                string detail;
+
+                if (ex is AppException appEx)
+                {
+                    detail = _localizer[appEx.Code];
+                }
+                else
+                {
+                    detail = _localizer["InternalServerError"];
+                }
+
+
                 var problem = new
                 {
                     type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-                    title = "Internal Server Error",
+                    title = _localizer["InternalServerError"],
                     status = context.Response.StatusCode,
-                    detail = ex.Message,
+                    detail = detail,
                     instance = context.Request.Path
                 };
 

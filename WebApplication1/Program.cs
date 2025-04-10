@@ -103,7 +103,6 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
 app.UseMiddleware<WebApplication1.Middleware.ErrorHandlingMiddleware>();
 
 app.UseRequestLocalization(options =>
