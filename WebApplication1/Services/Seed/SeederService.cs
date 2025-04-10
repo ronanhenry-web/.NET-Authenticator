@@ -1,4 +1,7 @@
-﻿namespace WebApplication1.Data.Seed
+﻿using WebApplication1.Data;
+using WebApplication1.Data.Seed;
+
+namespace WebApplication1.Services.Seed
 {
     public class SeederService : ISeederService
     {

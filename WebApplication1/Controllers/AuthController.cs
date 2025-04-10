@@ -23,17 +23,17 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var result = await _authService.LoginAsync(model);
-            return result is null ? Unauthorized("Invalid credentials") : Ok(result);
+            var response = await _authService.LoginAsync(model);
+            return response is null ? Unauthorized("Invalid credentials") : Ok(response);
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(RefreshRequestModel model)
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequestModel model)
         {
-            var result = await _authService.RefreshTokenAsync(model);
-            return result is null ? Unauthorized("Invalid refresh token") : Ok(result);
+            var response = await _authService.RefreshTokenAsync(model);
+            return response is null ? Unauthorized("Invalid refresh token") : Ok(response);
         }
     }
 }

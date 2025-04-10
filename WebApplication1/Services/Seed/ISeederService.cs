@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Data.Seed
+﻿namespace WebApplication1.Services.Seed
 {
     public interface ISeederService
     {
