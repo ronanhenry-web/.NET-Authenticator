@@ -62,12 +62,12 @@ cd .NET-Authenticator
 
 ### 2. Configure the database
 
-In `appsettings.json`, update the `DefaultConnection` string to match your SQL Server settings.
+In `appsettings.json`, update the `DefaultConnection` string to match your SQL Lite settings.
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=AuthenticatorDb;Trusted_Connection=True;"
-}
+    "DefaultConnection": "Data Source=articles.db"
+},
 ```
 
 ### 3. Run migrations and seed the database
