@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace WebApplication1.Controllers
 {
@@ -13,23 +12,9 @@ namespace WebApplication1.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Crash()
         {
-            throw new InvalidOperationException("Bouuuuuummmmm");
+            // Ajouter Bearer dans l'ajout du token Authorization dans Swagger sinon ca ne marche pas
+            return Ok("Bouuummm");
         }
-
-        [HttpGet("me")]
-        [Authorize]
-        public IActionResult Me()
-        {
-            var identity = User.Identity;
-            var roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
-            return Ok(new
-            {
-                identity?.Name,
-                identity?.IsAuthenticated,
-                roles = roles.ToList()
-            });
-        }
-
     }
 
 }

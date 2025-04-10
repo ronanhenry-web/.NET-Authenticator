@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data.Entity;
 using WebApplication1.Services.Article;
 using WebApplication1.Services.Model;
@@ -7,6 +8,7 @@ namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ArticlesController : ControllerBase
     {
         private readonly IArticleService _service;

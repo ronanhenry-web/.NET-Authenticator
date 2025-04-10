@@ -49,8 +49,7 @@ builder.Services.AddAuthentication(options =>
 
 .AddJwtBearer(options =>
 {
-    var jwtKey = builder.Configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException("Jwt:Key is missing in configuration");
+    var jwtKey = builder.Configuration["Jwt:Key"];
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -104,7 +103,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseHttpsRedirection();
+app.UseMiddleware<WebApplication1.Middleware.ErrorHandlingMiddleware>();
 
 app.UseRequestLocalization(options =>
 {
@@ -129,6 +129,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
 
 app.UseAuthentication();
 
