@@ -34,11 +34,22 @@ This project is a .NET 8 Web API demonstrating a complete authentication system 
 
 ## 🔐 Endpoints
 
+### 🔑 Authentication
+
 | Method | Route                | Description                  |
 |--------|----------------------|------------------------------|
 | POST   | `/api/auth/register` | Register a new user          |
 | POST   | `/api/auth/login`    | Login and receive JWT token  |
 | POST   | `/api/auth/refresh`  | Get a new access token       |
+
+### 📰 Articles
+
+| Method | Route                | Description                        |
+|--------|----------------------|------------------------------------|
+| GET    | `/api/articles`      | Get all articles                   |
+| GET    | `/api/articles/{id}` | Get an article by ID               |
+| POST   | `/api/articles`      | Create a new article               |
+| DELETE | `/api/articles/{id}` | Delete an article by ID            |
 
 ## 🚀 Getting Started
 
