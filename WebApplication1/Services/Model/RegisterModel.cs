@@ -1,9 +1,16 @@
-﻿namespace WebApplication1.Services.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication1.Services.Model
 {
     public class RegisterModel
     {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string DisplayName { get; set; } = string.Empty;
+        [Required(ErrorMessage = "REQUIRED_EMAIL")]
+        [EmailAddress(ErrorMessage = "INVALID_EMAIL")]
+        public string Email { get; set; } = default!;
+        [Required(ErrorMessage = "REQUIRED_PASSWORD")]
+        [MinLength(6, ErrorMessage = "Le mot de passe doit contenir au moins 6 caractères")]
+        public string Password { get; set; } = default!;
+        [Required(ErrorMessage = "REQUIRED_DISPLAYNAME")]
+        public string DisplayName { get; set; } = default!;
     }
 }

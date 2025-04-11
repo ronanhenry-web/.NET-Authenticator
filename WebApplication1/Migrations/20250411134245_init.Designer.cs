@@ -11,14 +11,29 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250409190228_AddRefreshToken")]
-    partial class AddRefreshToken
+    [Migration("20250411134245_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
+
+            modelBuilder.Entity("ApplicationUserInterventionEntity", b =>
+                {
+                    b.Property<int>("InterventionEntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TechniciansId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("InterventionEntityId", "TechniciansId");
+
+                    b.HasIndex("TechniciansId");
+
+                    b.ToTable("ApplicationUserInterventionEntity");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -122,7 +137,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.ApplicationRole", b =>
+            modelBuilder.Entity("WebApplication1.Data.Entity.Identity.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -148,7 +163,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.ApplicationUser", b =>
+            modelBuilder.Entity("WebApplication1.Data.Entity.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -215,26 +230,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("WebApplication1.Data.Entity.Article", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Articles");
-                });
-
-            modelBuilder.Entity("WebApplication1.Data.Entity.RefreshToken", b =>
+            modelBuilder.Entity("WebApplication1.Data.Entity.RefreshTokenEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -264,9 +260,64 @@ namespace WebApplication1.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("WebApplication1.DataAccess.Entity.InterventionEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ServiceTypeId");
+
+                    b.ToTable("Interventions");
+                });
+
+            modelBuilder.Entity("WebApplication1.DataAccess.Entity.ServiceTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServiceTypes");
+                });
+
+            modelBuilder.Entity("ApplicationUserInterventionEntity", b =>
+                {
+                    b.HasOne("WebApplication1.DataAccess.Entity.InterventionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("InterventionEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("TechniciansId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("WebApplication1.ApplicationRole", null)
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -275,7 +326,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("WebApplication1.ApplicationUser", null)
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -284,7 +335,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("WebApplication1.ApplicationUser", null)
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -293,13 +344,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("WebApplication1.ApplicationRole", null)
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApplication1.ApplicationUser", null)
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -308,22 +359,46 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("WebApplication1.ApplicationUser", null)
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApplication1.Data.Entity.RefreshToken", b =>
+            modelBuilder.Entity("WebApplication1.Data.Entity.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("WebApplication1.ApplicationUser", "User")
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebApplication1.DataAccess.Entity.InterventionEntity", b =>
+                {
+                    b.HasOne("WebApplication1.Data.Entity.Identity.ApplicationUser", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.DataAccess.Entity.ServiceTypeEntity", "ServiceType")
+                        .WithMany("Interventions")
+                        .HasForeignKey("ServiceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("ServiceType");
+                });
+
+            modelBuilder.Entity("WebApplication1.DataAccess.Entity.ServiceTypeEntity", b =>
+                {
+                    b.Navigation("Interventions");
                 });
 #pragma warning restore 612, 618
         }

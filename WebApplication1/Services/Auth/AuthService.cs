@@ -9,6 +9,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data.Entity.Identity;
+using System.Data;
+using WebApplication1.Middleware;
 
 namespace WebApplication1.Services.Auth
 {
@@ -28,8 +30,15 @@ namespace WebApplication1.Services.Auth
             _config = config;
         }
 
-        public async Task<AuthResponseModel?> RegisterAsync(RegisterModel register)
+        public async Task<AuthResponseModel?> RegisterAsync(RegisterModel register, string role = "technicien")
         {
+            if (role != "client" && role != "technicien")
+                throw new AppException("REGISTER_FAILED");
+
+            var existing = await _userManager.FindByEmailAsync(register.Email);
+            if (existing != null)
+                throw new AppException("EMAIL_USED");
+
             var user = new ApplicationUser
             {
                 Email = register.Email,
@@ -38,16 +47,25 @@ namespace WebApplication1.Services.Auth
             };
 
             var result = await _userManager.CreateAsync(user, register.Password);
-            return result.Succeeded ? await GenerateAuthResponse(user) : null;
+            if (!result.Succeeded)
+                throw new AppException("REGISTER_FAILED");
+
+            await _userManager.AddToRoleAsync(user, role);
+            return await GenerateAuthResponse(user);
         }
+
 
         public async Task<AuthResponseModel?> LoginAsync(LoginModel login)
         {
             var user = await _userManager.FindByEmailAsync(login.Email);
-            if (user == null) return null;
+            if (user == null)
+                throw new AppException("USER_NOT_FOUND");
 
             var result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-            return result.Succeeded ? await GenerateAuthResponse(user) : null;
+            if (!result.Succeeded)
+                return null;
+
+            return await GenerateAuthResponse(user);
         }
 
         public async Task<AuthResponseModel?> RefreshTokenAsync(RefreshRequestModel refresh)

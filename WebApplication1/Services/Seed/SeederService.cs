@@ -1,5 +1,5 @@
 ﻿using WebApplication1.Data;
-using WebApplication1.Data.Seed;
+using WebApplication1.DataAccess.Seed;
 
 namespace WebApplication1.Services.Seed
 {
@@ -14,8 +14,8 @@ namespace WebApplication1.Services.Seed
 
         public void SeedDatabase()
         {
-            _context.Database.EnsureCreated();
-            ArticleSeeder.Seed(_context);
+            //_context.Database.EnsureCreated();
+            ServiceTypeSeeder.Seed(_context);
         }
     }
 }

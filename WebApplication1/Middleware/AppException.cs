@@ -1,4 +1,4 @@
-﻿namespace WebApplication1
+﻿namespace WebApplication1.Middleware
 {
     public class AppException : Exception
     {

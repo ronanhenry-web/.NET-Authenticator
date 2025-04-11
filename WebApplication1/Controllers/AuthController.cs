@@ -15,12 +15,20 @@ namespace WebApplication1.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterModel model)
+        [HttpPost("register/client")]
+        public async Task<IActionResult> RegisterClient([FromBody] RegisterModel model)
         {
-            var result = await _authService.RegisterAsync(model);
-            return result is null ? BadRequest("Register failed") : Ok(result);
+            var result = await _authService.RegisterAsync(model, "client");
+            return Ok(result);
         }
+
+        [HttpPost("register/technicien")]
+        public async Task<IActionResult> RegisterTechnicien([FromBody] RegisterModel model)
+        {
+            var result = await _authService.RegisterAsync(model, "technicien");
+            return Ok(result);
+        }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)

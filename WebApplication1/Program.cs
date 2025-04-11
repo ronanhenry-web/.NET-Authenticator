@@ -5,23 +5,34 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
-using WebApplication1;
 using WebApplication1.Data;
-using WebApplication1.Data.Dao;
 using WebApplication1.Data.Entity.Identity;
+using WebApplication1.DataAccess.Dao;
 using WebApplication1.DataAccess.Seed;
-using WebApplication1.Services.Article;
 using WebApplication1.Services.Auth;
+using WebApplication1.Services.Intervention;
 using WebApplication1.Services.Seed;
+using WebApplication1.Services.ServiceType;
+using WebApplication1.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
-{
-    options.SuppressModelStateInvalidFilter = false;
-});
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(ValidationMessages));
+    })
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = false;
+    });
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -29,9 +40,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IArticleDataAccess, ArticleDataAccess>();
-builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<IInterventionDataAccess, InterventionDataAccess>();
+builder.Services.AddScoped<IServiceTypeDataAccess, ServiceTypeDataAccess>();
+
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IInterventionService, InterventionService>();
+
 builder.Services.AddScoped<ISeederService, SeederService>();
+
+builder.Services.AddAutoMapper(typeof(ProfileAutoMapper));
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -44,8 +61,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-
-
 
 .AddJwtBearer(options =>
 {
@@ -67,8 +82,6 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -77,12 +90,12 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Description = "Entrez uniquement votre token JWT",
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Saisir 'Bearer {votre_token}'"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -100,6 +113,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
 
 var app = builder.Build();
 
@@ -128,8 +142,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
 
 app.UseAuthentication();
 

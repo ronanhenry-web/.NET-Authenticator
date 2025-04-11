@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Localization;
 using System.Net;
 using System.Text.Json;
 
@@ -49,7 +47,7 @@ namespace WebApplication1.Middleware
                     type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
                     title = _localizer["InternalServerError"],
                     status = context.Response.StatusCode,
-                    detail = detail,
+                    detail,
                     instance = context.Request.Path
                 };
 
