@@ -8,6 +8,9 @@ This project is a .NET 8 Web API demonstrating a complete authentication system 
 - 🔐 Secure **refresh token** mechanism
 - 👤 User & Role management with **ASP.NET Identity**
 - 🧱 Clean architecture: **Controller / Service / DataAccess**
+- 🌍 Localization support (i18n) and RFC 7807 error format
+- 📋 Full CRUD for Interventions and Service Types
+- 👥 Role-specific endpoints for clients and technicians
 - 🧪 Ready for integration with frontend apps or mobile clients
 - 📁 Modular structure with support for **manual data seeding**
 
@@ -19,6 +22,7 @@ This project is a .NET 8 Web API demonstrating a complete authentication system 
 ├── DataAccess/        # EF Core context & repositories
 ├── DTOs/              # Data transfer objects
 ├── Models/            # Domain entities
+├── Middleware/        # Error handling, localization
 ├── Program.cs         # App configuration
 ├── appsettings.json   # Config file
 ```
@@ -36,20 +40,27 @@ This project is a .NET 8 Web API demonstrating a complete authentication system 
 
 ### 🔑 Authentication
 
-| Method | Route                | Description                  |
-|--------|----------------------|------------------------------|
-| POST   | `/api/auth/register` | Register a new user          |
-| POST   | `/api/auth/login`    | Login and receive JWT token  |
-| POST   | `/api/auth/refresh`  | Get a new access token       |
+| Method | Route                              | Description                        |
+|--------|------------------------------------|------------------------------------|
+| POST   | `/api/auth/register/client`        | Register a new client              |
+| POST   | `/api/auth/register/technicien`    | Register a new technician          |
+| POST   | `/api/auth/login`                  | Login and receive JWT token        |
+| POST   | `/api/auth/refresh`                | Get a new access token             |
 
-### 📰 Articles
+### 🛠️ Interventions
 
-| Method | Route                | Description                        |
-|--------|----------------------|------------------------------------|
-| GET    | `/api/articles`      | Get all articles                   |
-| GET    | `/api/articles/{id}` | Get an article by ID               |
-| POST   | `/api/articles`      | Create a new article               |
-| DELETE | `/api/articles/{id}` | Delete an article by ID            |
+| Method | Route                          | Description                               |
+|--------|--------------------------------|-------------------------------------------|
+| GET   | `/api/intervention`             | Get all interventions (admin/tech/client) |
+| GET   | `/api/intervention/{id}`        | Get a specific intervention by ID         |
+| POST   | `/api/intervention`            | Create a new intervention (admin only)    |
+
+### 🦾 Service Types
+
+| Method | Route                          | Description                            |
+|--------|--------------------------------|----------------------------------------|
+| GET   | `/api/servicetype`              | Get all service types                  |
+| POST   | `/api/servicetype`             | Create a new service type (admin)      |
 
 ## 🚀 Getting Started
 
@@ -104,6 +115,7 @@ POST /api/auth/login
 - Passwords hashed using PBKDF2
 - JWT tokens signed and verified with a secret key
 - Refresh tokens stored securely and linked to users
+- RFC 7807 compliant error handling with i18n support
 - CSRF/XSS mitigations explained in code comments
 
 ## 📚 Based on
@@ -112,8 +124,8 @@ This project follows concepts from an advanced .NET course, including:
 - REST API fundamentals
 - Identity + JWT setup
 - Manual seeding
-- Dependency Injection
-- Secure authentication flows
+- Clean architecture and DI
+- Localized error messages
 
 ---
 
